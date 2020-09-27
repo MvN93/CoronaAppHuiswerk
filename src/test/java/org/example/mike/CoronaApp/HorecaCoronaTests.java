@@ -39,4 +39,10 @@ public class HorecaCoronaTests {
         Reservering reservering = new Reservering(tijdNu, naam, tafel);
         System.out.println(reservering.getDatum() + " ; " + reservering.getTijdVan() + " ; " + reservering.getTijdTot() + " ; " + reservering.getNaamReservering() + "; " + reservering.getTafel().getTafelNummer());
     }
+    void aanmakenReserveringenManager(){
+        Adres testAdres = new Adres("Zee", 44, "Dam");
+        HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres);
+        ReserveringenManager reserveringenManager = new ReserveringenManager(horecaTest);
+        System.out.println("werkt in:" + reserveringenManager.getHorecaGelegenheid().getNaam());
+    }
 }

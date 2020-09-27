@@ -36,6 +36,10 @@ public class Reservering {
     }
 
 
+    String toStringRepresentation(){
+        return "Naam: " + getNaamReservering() + ", van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
+    }
+
     //getters and setters
     public void setDatum(LocalDate datum) {
         this.datum = datum;

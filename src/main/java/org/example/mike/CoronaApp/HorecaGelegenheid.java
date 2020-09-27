@@ -1,13 +1,20 @@
 package org.example.mike.CoronaApp;
 
+import java.util.ArrayList;
+
 public class HorecaGelegenheid {
     private String naam;
     private Adres adres;
+    private int aantalTafels;
     private int maximaleCapaciteitHorecaGelegenheid;
+    private ArrayList<Tafel> lijstVanTafels;
 
-    HorecaGelegenheid(String naam, Adres adres){
+    HorecaGelegenheid(String naam, Adres adres, int aantalTafels, int maximaleCapaciteitHorecaGelegenheid, ArrayList<Tafel> lijstVanTafels){
         setNaam(naam);
         setAdres(adres);
+        setAantalTafels(aantalTafels);
+        setMaximaleCapaciteitHorecaGelegenheid(maximaleCapaciteitHorecaGelegenheid);
+        setLijstVanTafels(lijstVanTafels);
     }
 
 
@@ -26,10 +33,24 @@ public class HorecaGelegenheid {
         return adres;
     }
 
+    public void setAantalTafels(int aantalTafels) {
+        this.aantalTafels = aantalTafels;
+    }
+    public int getAantalTafels() {
+        return aantalTafels;
+    }
+
     int getMaximaleCapaciteitHorecaGelegenheid() {
         return maximaleCapaciteitHorecaGelegenheid;
     }
     void setMaximaleCapaciteitHorecaGelegenheid(int maximaleCapaciteitHorecaGelegenheid) {
         this.maximaleCapaciteitHorecaGelegenheid = maximaleCapaciteitHorecaGelegenheid;
+    }
+
+    public void setLijstVanTafels(ArrayList<Tafel> lijstVanTafels) {
+        this.lijstVanTafels = lijstVanTafels;
+    }
+    public ArrayList<Tafel> getLijstVanTafels() {
+        return lijstVanTafels;
     }
 }

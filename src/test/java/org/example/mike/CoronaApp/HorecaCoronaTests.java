@@ -4,9 +4,32 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 
 public class HorecaCoronaTests {
 
+
+    @Test
+    void aanmakenVanEenReserveringDoorDeManager(){
+        HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
+        ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
+        Persoon testPersoon = new Persoon("Naam");
+
+        reserveringenManager.neemReserveringAan(testPersoon,LocalTime.now(), LocalTime.now());
+        reserveringenManager.printLijstVanReserveringen();
+
+    }
+
+    HorecaGelegenheid maakEenHorecaGelegenheidAan() {
+        Adres testAdres = new Adres("Zee", 44, "Dam");
+        Tafel tafel = new Tafel(0);
+        Tafel tafel1 = new Tafel(1);
+        ArrayList<Tafel> lijstVanTafels = new ArrayList<Tafel>();
+        lijstVanTafels.add(tafel);
+        lijstVanTafels.add(tafel1);
+        HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres, 2, 40, lijstVanTafels);
+        return horecaTest;
+    }
 
     //base tests
     @Test
@@ -19,7 +42,12 @@ public class HorecaCoronaTests {
 
     void aanmakenHorecaGelegenheid(){
         Adres testAdres = new Adres("Zee", 44, "Dam");
-        HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres);
+        Tafel tafel = new Tafel(0);
+        Tafel tafel1 = new Tafel(1);
+        ArrayList<Tafel> lijstVanTafels = new ArrayList<Tafel>();
+        lijstVanTafels.add(tafel);
+        lijstVanTafels.add(tafel1);
+        HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres, 2, 40, lijstVanTafels);
         System.out.println(horecaTest.getNaam() + "; " + horecaTest.getAdres().toStringRepresentation());
     }
     void aanmakenTafel(){
@@ -41,7 +69,12 @@ public class HorecaCoronaTests {
     }
     void aanmakenReserveringenManager(){
         Adres testAdres = new Adres("Zee", 44, "Dam");
-        HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres);
+        Tafel tafel = new Tafel(0);
+        Tafel tafel1 = new Tafel(1);
+        ArrayList<Tafel> lijstVanTafels = new ArrayList<Tafel>();
+        lijstVanTafels.add(tafel);
+        lijstVanTafels.add(tafel1);
+        HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres, 2, 40, lijstVanTafels);
         ReserveringenManager reserveringenManager = new ReserveringenManager(horecaTest);
         System.out.println("werkt in:" + reserveringenManager.getHorecaGelegenheid().getNaam());
     }

@@ -10,27 +10,29 @@ public class Reservering {
     private LocalTime tijdTot;
     private String naamReservering; //voor wanneer geen Persoon maar alleen naam meegegeven
                                     // (note kan met persoon.getNaam altijd worden meegegeven wanneer wel persoon gelinked is)
+    private Tafel tafel;
 
     //wanneer geen datum en eindtijd aangegeven ga uit van vandaag en van max 2 uur
-    Reservering(LocalTime tijdVan, String naamReservering){
-        this(LocalDate.now(), tijdVan, tijdVan.plusHours(2), naamReservering);
+    Reservering(LocalTime tijdVan, String naamReservering, Tafel tafel){
+        this(LocalDate.now(), tijdVan, tijdVan.plusHours(2), naamReservering, tafel);
     }
 
     //wanneer geen datum ga uit van vandaag
-    Reservering(LocalTime tijdVan, LocalTime tijdTot, String naamReservering){
-        this(LocalDate.now(), tijdVan, tijdTot, naamReservering);
+    Reservering(LocalTime tijdVan, LocalTime tijdTot, String naamReservering, Tafel tafel){
+        this(LocalDate.now(), tijdVan, tijdTot, naamReservering, tafel);
     }
 
     //wanneer geen eindtijd aangegeven ga uit van max tijd 2 uur
-    Reservering(LocalDate datum, LocalTime tijdVan, String naamReservering){
-        this(datum, tijdVan, tijdVan.plusHours(2), naamReservering);
+    Reservering(LocalDate datum, LocalTime tijdVan, String naamReservering, Tafel tafel){
+        this(datum, tijdVan, tijdVan.plusHours(2), naamReservering, tafel);
     }
 
-    Reservering(LocalDate datum, LocalTime tijdVan, LocalTime tijdTot, String naamReservering){
+    Reservering(LocalDate datum, LocalTime tijdVan, LocalTime tijdTot, String naamReservering, Tafel tafel){
         setDatum(datum);
         setTijdVan(tijdVan);
         setTijdTot(tijdTot);
         setNaamReservering(naamReservering);
+        setTafel(tafel);
     }
 
 
@@ -61,5 +63,12 @@ public class Reservering {
     }
     public String getNaamReservering() {
         return naamReservering;
+    }
+
+    public void setTafel(Tafel tafel) {
+        this.tafel = tafel;
+    }
+    public Tafel getTafel() {
+        return tafel;
     }
 }

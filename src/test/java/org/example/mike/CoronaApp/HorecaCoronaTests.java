@@ -48,7 +48,7 @@ public class HorecaCoronaTests {
         lijstVanTafels.add(tafel);
         lijstVanTafels.add(tafel1);
         HorecaGelegenheid horecaTest = new HorecaGelegenheid("TestKroeg", testAdres, 2, 40, lijstVanTafels);
-        System.out.println(horecaTest.getNaam() + "; " + horecaTest.getAdres().toStringRepresentation());
+        System.out.println(horecaTest.getNaam() + "; " + horecaTest.getAdres().toString());
     }
     void aanmakenTafel(){
         Tafel tafel = new Tafel(0);

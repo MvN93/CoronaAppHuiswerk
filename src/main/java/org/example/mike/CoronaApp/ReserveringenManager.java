@@ -56,7 +56,7 @@ public class ReserveringenManager {
     //print lijst van reserveringen
     void printLijstVanReserveringen(){
         for(Reservering reservering : lijstVanReserveringen){
-            System.out.println("Gereserveerd door " + reservering.toStringRepresentation());
+            System.out.println("Gereserveerd door " + reservering.toString());
         }
     }
 

@@ -11,7 +11,7 @@ public class Adres {
             setPlaats(plaats);
         }
 
-        String toStringRepresentation()
+        public String toString()
         {
             return straat + " " + huisnummer + ", " + plaats + ".";
         }

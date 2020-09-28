@@ -36,7 +36,7 @@ public class Reservering {
     }
 
 
-    String toStringRepresentation(){
+    public String toString(){
         return "Naam: " + getNaamReservering() + ", van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
     }
 

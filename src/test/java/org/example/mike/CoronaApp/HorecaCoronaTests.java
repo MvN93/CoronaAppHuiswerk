@@ -16,8 +16,8 @@ public class HorecaCoronaTests {
         Persoon testPersoon = new Persoon("Naam");
         Persoon testPersoon2 = new Persoon("Naam2");
 
-        reserveringenManager.neemReserveringAan(testPersoon,LocalTime.now(), LocalTime.now());
-        reserveringenManager.neemReserveringAan(testPersoon2,LocalTime.now(), LocalTime.now());
+        reserveringenManager.neemReserveringAan(testPersoon,LocalTime.now(), LocalTime.now().plusHours(4));
+        reserveringenManager.neemReserveringAan(testPersoon2,LocalTime.now().plusHours(1), LocalTime.now().plusHours(2));
         reserveringenManager.printLijstVanReserveringen();
 
     }

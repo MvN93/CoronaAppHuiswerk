@@ -37,22 +37,22 @@ public class ReserveringenManager {
                 //??then we wouldnt need tafelnummer at all here just check tables in the array? is that better though?
                 if(!(reservering.getTafel().getTafelNummer() == tafelnummer)){
                     tafelIsVrij = true;
-                }
 
-                //Let op!! Dit zou in principe okey kunnen zijn, maar ga na of de condities werken
-                //want test lukt nog niet
-                boolean beginTijdLigtTijdensBestaandeReservering = ((reservering.getTijdVan().getHour() - beginTijdReservering.getHour()) <= 0) && ((beginTijdReservering.getHour() - reservering.getTijdTot().getHour()) <=0);
-                if(beginTijdLigtTijdensBestaandeReservering == true){
+                    //Let op!! Dit zou in principe okey kunnen zijn, maar ga na of de condities werken
+                    //want test lukt nog niet
+                    boolean beginTijdLigtTijdensBestaandeReservering = ((reservering.getTijdVan().getHour() - beginTijdReservering.getHour()) <= 0) && ((beginTijdReservering.getHour() - reservering.getTijdTot().getHour()) <=0);
+                    if(beginTijdLigtTijdensBestaandeReservering == true){
+                        tafelIsVrij = false;
+                    }
+
+                    boolean eindTijdLigtTijdensBestaandeReservering = ((reservering.getTijdVan().getHour() - eindTijdReservering.getHour()) <= 0) && ((eindTijdReservering.getHour() - reservering.getTijdTot().getHour()) <=0);
+                    if(eindTijdLigtTijdensBestaandeReservering == true){
+                        tafelIsVrij = false;
+                    }
+                }
+                else{
                     tafelIsVrij = false;
                 }
-
-                boolean eindTijdLigtTijdensBestaandeReservering = ((reservering.getTijdVan().getHour() - eindTijdReservering.getHour()) <= 0) && ((eindTijdReservering.getHour() - reservering.getTijdTot().getHour()) <=0);
-                if(eindTijdLigtTijdensBestaandeReservering == true){
-                    tafelIsVrij = false;
-                }
-
-
-
             }
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel

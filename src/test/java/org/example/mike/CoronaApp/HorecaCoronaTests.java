@@ -14,8 +14,10 @@ public class HorecaCoronaTests {
         HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
         ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
         Persoon testPersoon = new Persoon("Naam");
+        Persoon testPersoon2 = new Persoon("Naam2");
 
         reserveringenManager.neemReserveringAan(testPersoon,LocalTime.now(), LocalTime.now());
+        reserveringenManager.neemReserveringAan(testPersoon2,LocalTime.now(), LocalTime.now());
         reserveringenManager.printLijstVanReserveringen();
 
     }

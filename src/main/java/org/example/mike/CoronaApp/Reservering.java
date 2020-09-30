@@ -36,6 +36,7 @@ public class Reservering {
     }
 
 
+
     public String toString(){
         return "Naam: " + getNaamReservering() + ", van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
     }

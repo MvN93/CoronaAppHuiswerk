@@ -18,10 +18,17 @@ public class HorecaCoronaTests {
         Persoon testPersoon3 = new Persoon("Naam3");
         Persoon testPersoon4 = new Persoon("Naam4");
 
-        reserveringenManager.neemReserveringAan(testPersoon,LocalTime.now(), LocalTime.now().plusHours(4));
-        reserveringenManager.neemReserveringAan(testPersoon2,LocalTime.now().plusHours(1), LocalTime.now().plusHours(2));
-        reserveringenManager.neemReserveringAan(testPersoon3,LocalTime.now().plusHours(-4), LocalTime.now().plusHours(-3));
-        reserveringenManager.neemReserveringAan(testPersoon4,LocalTime.now().plusHours(1), LocalTime.now().plusHours(2));
+        LocalTime tijd1 =  LocalTime.of(13, 45);
+        LocalTime tijd2 =  LocalTime.of(17, 15);
+        LocalTime tijd3 =  LocalTime.of(14, 45);
+        LocalTime tijd4 =  LocalTime.of(15, 25);
+        LocalTime tijd5 =  LocalTime.of(9, 30);
+        LocalTime tijd6 =  LocalTime.of(10, 45);
+
+        reserveringenManager.neemReserveringAan(testPersoon,tijd1, tijd2);
+        reserveringenManager.neemReserveringAan(testPersoon2,tijd3, tijd4);
+        reserveringenManager.neemReserveringAan(testPersoon3,tijd5, tijd6);
+        reserveringenManager.neemReserveringAan(testPersoon4,tijd3, tijd4);
         reserveringenManager.printLijstVanReserveringen();
 
     }

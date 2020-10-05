@@ -1,6 +1,5 @@
 package org.example.mike.CoronaApp;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -37,27 +36,7 @@ public class ReserveringenManager {
             boolean tafelIsVrij = true;
 
             if(lijstVanReserveringen.size() > 0) {
-                for (Reservering reservering : lijstVanReserveringen) {
-
-                    boolean reserveringIsVanAnderTafelNummer = !(reservering.getTafel().getTafelNummer() == tafelnummer);
-
-                    if(reserveringIsVanAnderTafelNummer == true) {
-                        //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel
-                    }
-                    else {
-                        boolean beginTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(beginTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
-
-                        if (beginTijdsuurLigtInGereserveerdTijdsvlak == true) {
-                            tafelIsVrij = false;
-                        }
-
-                        boolean eindTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(eindTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
-
-                        if (eindTijdsuurLigtInGereserveerdTijdsvlak == true) {
-                            tafelIsVrij = false;
-                        }
-                    }
-                }
+                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, tafelIsVrij);
             }
             //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
 
@@ -89,27 +68,7 @@ public class ReserveringenManager {
             boolean tafelIsVrij = true;
 
             if(lijstVanReserveringen.size() > 0) {
-                for (Reservering reservering : lijstVanReserveringen) {
-
-                    boolean reserveringIsVanAnderTafelNummer = !(reservering.getTafel().getTafelNummer() == tafelnummer);
-
-                    if(reserveringIsVanAnderTafelNummer == true) {
-                        //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel
-                    }
-                    else {
-                        boolean beginTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(beginTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
-
-                        if (beginTijdsuurLigtInGereserveerdTijdsvlak == true) {
-                            tafelIsVrij = false;
-                        }
-
-                        boolean eindTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(eindTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
-
-                        if (eindTijdsuurLigtInGereserveerdTijdsvlak == true) {
-                            tafelIsVrij = false;
-                        }
-                    }
-                }
+                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, tafelIsVrij);
             }
             //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
 
@@ -127,6 +86,31 @@ public class ReserveringenManager {
         }
     }
 
+    boolean gaNaOfTafelVrijIs(int tafelnummer, LocalTime beginTijdReservering, LocalTime eindTijdReservering, boolean tafelIsVrij){
+        for (Reservering reservering : lijstVanReserveringen) {
+
+            boolean reserveringIsVanAnderTafelNummer = !(reservering.getTafel().getTafelNummer() == tafelnummer);
+
+            if(reserveringIsVanAnderTafelNummer == true) {
+                //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel
+            }
+            else {
+                boolean beginTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(beginTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
+
+                if (beginTijdsuurLigtInGereserveerdTijdsvlak == true) {
+                    tafelIsVrij = false;
+                }
+
+                boolean eindTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(eindTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
+
+                if (eindTijdsuurLigtInGereserveerdTijdsvlak == true) {
+                    tafelIsVrij = false;
+                }
+            }
+        }
+
+        return tafelIsVrij;
+    }
 
     boolean ingevoerdeTijdsuurLigtInVolTijdsvlak(int ingevoerdeTijd, int beginTijdTijdsvlak, int eindTijdTijdsvlak){
         //!!Note dit gaat nu mis voor na middernacht!!! vanaf 24 uur begint dan namelijk weer 0, 1, 2, etc.

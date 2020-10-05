@@ -1,5 +1,6 @@
 package org.example.mike.CoronaApp;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -13,16 +14,16 @@ public class ReserveringenManager {
     }
 
     //checked de datum nog niet
-    void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering){
+    void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering){
         if(!(persoon == null)){
-            neemReserveringAanPersoonsObjectBekend(persoon, beginTijdReservering, eindTijdReservering);
+            neemReserveringAanPersoonsObjectBekend(persoon, beginTijdReservering, eindTijdReservering, datumReservering);
         }
         else {
-            neemReserveringAanAlleenNaamBekend(reserveringOnderNaam, beginTijdReservering, eindTijdReservering);
+            neemReserveringAanAlleenNaamBekend(reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
         }
     }
 
-    void neemReserveringAanPersoonsObjectBekend(Persoon persoon, LocalTime beginTijdReservering, LocalTime eindTijdReservering) {
+    void neemReserveringAanPersoonsObjectBekend(Persoon persoon, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
         //!!Note: dit houdt nu nog geen rekening met of voldoende plek aan tafel
 
         boolean vrijeTafelGevonden = false;
@@ -36,14 +37,14 @@ public class ReserveringenManager {
             boolean tafelIsVrij = true;
 
             if(lijstVanReserveringen.size() > 0) {
-                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, tafelIsVrij);
+                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, datumReservering, tafelIsVrij);
             }
             //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
                 //new variabele voor gevonden tafel
-                Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
                 lijstVanReserveringen.add(nieuweReservering);
 
                 //om de while loop te breken
@@ -55,7 +56,7 @@ public class ReserveringenManager {
         }
     }
 
-    void neemReserveringAanAlleenNaamBekend(String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering) {
+    void neemReserveringAanAlleenNaamBekend(String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
         //!!Note: dit houdt nu nog geen rekening met of voldoende plek aan tafel
 
         boolean vrijeTafelGevonden = false;
@@ -69,13 +70,13 @@ public class ReserveringenManager {
             boolean tafelIsVrij = true;
 
             if(lijstVanReserveringen.size() > 0) {
-                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, tafelIsVrij);
+                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, datumReservering, tafelIsVrij);
             }
             //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
-                Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
                 lijstVanReserveringen.add(nieuweReservering);
 
                 //om de while loop te breken
@@ -87,13 +88,17 @@ public class ReserveringenManager {
         }
     }
 
-    boolean gaNaOfTafelVrijIs(int tafelnummer, LocalTime beginTijdReservering, LocalTime eindTijdReservering, boolean tafelIsVrij){
+    boolean gaNaOfTafelVrijIs(int tafelnummer, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering, boolean tafelIsVrij){
         for (Reservering reservering : lijstVanReserveringen) {
 
             boolean reserveringIsVanAnderTafelNummer = !(reservering.getTafel().getTafelNummer() == tafelnummer);
+            boolean reserveringIsVanAnderDatum = !(reservering.getDatum() == datumReservering);
 
             if(reserveringIsVanAnderTafelNummer == true) {
-                //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel
+                //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel want andere tafel
+            }
+            else if(reserveringIsVanAnderDatum == true) {
+                //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel want andere datum
             }
             else {
                 //misschien dit blok in hulpmethode??

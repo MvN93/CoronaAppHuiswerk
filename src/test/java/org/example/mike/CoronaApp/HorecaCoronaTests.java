@@ -17,6 +17,7 @@ public class HorecaCoronaTests {
         Persoon testPersoon2 = new Persoon("Naam2");
         String testPersoon3 = "Naam3";
         Persoon testPersoon4 = new Persoon("Naam4");
+        Persoon testPersoon5 = new Persoon("Naam5");
 
         LocalTime tijd1 =  LocalTime.of(13, 45);
         LocalTime tijd2 =  LocalTime.of(17, 15);
@@ -25,10 +26,14 @@ public class HorecaCoronaTests {
         LocalTime tijd5 =  LocalTime.of(9, 30);
         LocalTime tijd6 =  LocalTime.of(10, 45);
 
-        reserveringenManager.neemReserveringAan(testPersoon, testPersoon.getNaam(), tijd1, tijd2);
-        reserveringenManager.neemReserveringAan(testPersoon2, testPersoon2.getNaam(),tijd3, tijd4);
-        reserveringenManager.neemReserveringAan(null, testPersoon3,tijd5, tijd6);
-        reserveringenManager.neemReserveringAan(testPersoon4, testPersoon4.getNaam(),tijd3, tijd4);
+        LocalDate testDatum = LocalDate.now();
+        LocalDate testDatum2 = LocalDate.now().plusDays(2);
+
+        reserveringenManager.neemReserveringAan(testPersoon, testPersoon.getNaam(), tijd1, tijd2, testDatum);
+        reserveringenManager.neemReserveringAan(testPersoon2, testPersoon2.getNaam(),tijd3, tijd4, testDatum);
+        reserveringenManager.neemReserveringAan(null, testPersoon3,tijd5, tijd6, testDatum);
+        reserveringenManager.neemReserveringAan(testPersoon4, testPersoon4.getNaam(),tijd3, tijd4, testDatum);
+        reserveringenManager.neemReserveringAan(testPersoon4, testPersoon5.getNaam(),tijd3, tijd4, testDatum2);
         reserveringenManager.printLijstVanReserveringen();
 
     }

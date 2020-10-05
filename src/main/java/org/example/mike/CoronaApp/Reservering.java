@@ -68,10 +68,10 @@ public class Reservering {
 
     public String toStringRepresentation(){
         if(this.persoonReservering == null) {
-            return "Naam: " + getNaamReservering() + ", van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
+            return "Naam: " + getNaamReservering() + ", gereserveerd op: " + getDatum() + " van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
         }
         else{
-            return "Naam: " + getNaamReservering() + " (tel.: " + persoonReservering.getTelefoonNummer() + "), van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
+            return "Naam: " + getNaamReservering() + " (tel.: " + persoonReservering.getTelefoonNummer() + "), gereserveerd op: " + getDatum() + " van: " + getTijdVan() + " tot: " + getTijdTot() + "; aan tafel nummer: " + getTafel().getTafelNummer();
         }
 
     }

@@ -36,6 +36,7 @@ public class Reservering {
         setTijdTot(tijdTot);
         setNaamReservering(naamReservering);
         setTafel(tafel);
+        this.persoonReservering = null; //zet in Setter
     }
 
     //Volgende Constructoren worden gebruikt wanneer het Persoonsobject wel bekend is.
@@ -86,7 +87,7 @@ public class Reservering {
     public void setTijdVan(LocalTime tijdVan) {
         this.tijdVan = tijdVan;
     }
-    //throw runtime exception if >= 23 (corona maatregel)
+    //throw runtime exception if >= constante 23 (corona maatregel)
     public LocalTime getTijdVan() {
         return tijdVan;
     }
@@ -94,7 +95,7 @@ public class Reservering {
     public void setTijdTot(LocalTime tijdTot) {
         this.tijdTot = tijdTot;
     }
-    //throw runtime exception if >= 23 (corona maatregel)
+    //throw runtime exception if >= constante 23 (corona maatregel)
     public LocalTime getTijdTot() {
         return tijdTot;
     }

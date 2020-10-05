@@ -12,6 +12,7 @@ public class ReserveringenManager {
         lijstVanReserveringen = new ArrayList<Reservering>();
     }
 
+    //checked de datum nog niet
     void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering){
         if(!(persoon == null)){
             neemReserveringAanPersoonsObjectBekend(persoon, beginTijdReservering, eindTijdReservering);
@@ -19,7 +20,6 @@ public class ReserveringenManager {
         else {
             neemReserveringAanAlleenNaamBekend(reserveringOnderNaam, beginTijdReservering, eindTijdReservering);
         }
-
     }
 
     void neemReserveringAanPersoonsObjectBekend(Persoon persoon, LocalTime beginTijdReservering, LocalTime eindTijdReservering) {
@@ -42,6 +42,7 @@ public class ReserveringenManager {
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
+                //new variabele voor gevonden tafel
                 Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
                 lijstVanReserveringen.add(nieuweReservering);
 
@@ -95,13 +96,14 @@ public class ReserveringenManager {
                 //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel
             }
             else {
-                boolean beginTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(beginTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
+                //misschien dit blok in hulpmethode??
+                boolean beginTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(beginTijdReservering, reservering.getTijdVan(), reservering.getTijdTot());
 
                 if (beginTijdsuurLigtInGereserveerdTijdsvlak == true) {
                     tafelIsVrij = false;
                 }
 
-                boolean eindTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(eindTijdReservering.getHour(), reservering.getTijdVan().getHour(), reservering.getTijdTot().getHour());
+                boolean eindTijdsuurLigtInGereserveerdTijdsvlak = ingevoerdeTijdsuurLigtInVolTijdsvlak(eindTijdReservering, reservering.getTijdVan(), reservering.getTijdTot());
 
                 if (eindTijdsuurLigtInGereserveerdTijdsvlak == true) {
                     tafelIsVrij = false;
@@ -112,17 +114,17 @@ public class ReserveringenManager {
         return tafelIsVrij;
     }
 
-    boolean ingevoerdeTijdsuurLigtInVolTijdsvlak(int ingevoerdeTijd, int beginTijdTijdsvlak, int eindTijdTijdsvlak){
-        //!!Note dit gaat nu mis voor na middernacht!!! vanaf 24 uur begint dan namelijk weer 0, 1, 2, etc.
-        //Nu oplossen door exception bij reservering, tijd moet <= 23 uur zijn, want coronamaatregel
-        //!!Note that now also only checks hours and not minutes, might give problems
-        boolean TijdsuurLigtInTijdensvlak = ((beginTijdTijdsvlak - ingevoerdeTijd) <= 0) && ((ingevoerdeTijd - eindTijdTijdsvlak) <= 0);
+    boolean ingevoerdeTijdsuurLigtInVolTijdsvlak(LocalTime ingevoerdeTijd, LocalTime beginTijdTijdsvlak, LocalTime eindTijdTijdsvlak){
+        //!!Note houdt niet rekening met datum
+        //We minus and add 15 minutes to give space to clean the tables (and to make sure that if the same time then the isbefore method still works)
+        boolean TijdsuurLigtInTijdensvlak = (ingevoerdeTijd.isAfter(beginTijdTijdsvlak.minusMinutes(15))) && (ingevoerdeTijd.isBefore(eindTijdTijdsvlak.plusMinutes(15)));
         return TijdsuurLigtInTijdensvlak;
     }
 
     Tafel vindtTafelHorendeBijTafelnummer(int tafelnummer, HorecaGelegenheid horecaGelegenheid){
         //??haalt een lijst van alle tafels (kan dit efficienter??, want wordt alleen gebruikt bij maken reservering)??
-        //maybe met hashmaps? dan alsnog een hele collection
+        //maybe met hashmaps?!!? dan alsnog een hele collection
+        //dan moet tafelnummer wel ook index zijn
         ArrayList<Tafel> lijstVanTafels = horecaGelegenheid.getLijstVanTafels();
         Tafel tafel = lijstVanTafels.get(tafelnummer);
         return tafel;

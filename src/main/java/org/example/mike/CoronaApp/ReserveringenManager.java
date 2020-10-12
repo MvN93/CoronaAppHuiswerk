@@ -11,6 +11,8 @@ public class ReserveringenManager {
     private HorecaGelegenheid horecaGelegenheid;
     private ArrayList<Reservering> lijstVanReserveringen;
 
+    private final static LocalTime SLUITINGSTIJD_ONDER_CORONAMAATREGELEN = LocalTime.of(23,00);
+
     ReserveringenManager(HorecaGelegenheid horecaGelegenheid){
         setHorecaGelegenheid(horecaGelegenheid);
         lijstVanReserveringen = new ArrayList<Reservering>();
@@ -21,7 +23,7 @@ public class ReserveringenManager {
         if(!(persoon == null)){
             neemReserveringAanPersoonsObjectBekend(persoon, beginTijdReservering, eindTijdReservering, datumReservering);
         }
-        else {
+        else{
             neemReserveringAanAlleenNaamBekend(reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
         }
     }
@@ -99,24 +101,25 @@ public class ReserveringenManager {
             //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
-            if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
-                Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                lijstVanReserveringen.add(nieuweReservering);
-
+            if(tafelIsVrij == true) {
+                if (!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)) {//&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
+                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                    lijstVanReserveringen.add(nieuweReservering);
+                }
+                else if (!(datumReservering == null) && !(beginTijdReservering == null)) {
+                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                    lijstVanReserveringen.add(nieuweReservering);
+                }
+                else if (!(beginTijdReservering == null) && !(eindTijdReservering == null)) {
+                    Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                    lijstVanReserveringen.add(nieuweReservering);
+                }
+                else if (!(beginTijdReservering == null)) {
+                    Reservering nieuweReservering = new Reservering(beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                    lijstVanReserveringen.add(nieuweReservering);
+                }
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
-            }
-            else if(!(datumReservering == null) && !(beginTijdReservering == null)){
-                Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                lijstVanReserveringen.add(nieuweReservering);
-            }
-            else if(!(beginTijdReservering == null) && !(eindTijdReservering == null)){
-                Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                lijstVanReserveringen.add(nieuweReservering);
-            }
-            else if(!(beginTijdReservering == null)){
-                Reservering nieuweReservering = new Reservering(beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                lijstVanReserveringen.add(nieuweReservering);
             }
             else{
                 tafelnummer = tafelnummer +1;
@@ -160,13 +163,17 @@ public class ReserveringenManager {
                 if (eindTijdsuurLigtInGereserveerdTijdsvlak == true) {
                     tafelIsVrij = false;
                 }
+
+                //Note dit is nodig omdat anders bij extreem lange reserveringen andere kortere reserveringen gecovered kunnen worden
+                if (beginTijdReservering.isBefore(reservering.getTijdVan()) && eindTijdReservering.isAfter(reservering.getTijdTot())) {
+                    tafelIsVrij = false;
+                }
             }
         }
         return tafelIsVrij;
     }
 
     boolean ingevoerdeTijdsuurLigtInVolTijdsvlak(LocalTime ingevoerdeTijd, LocalTime beginTijdTijdsvlak, LocalTime eindTijdTijdsvlak){
-        //!!Note houdt niet rekening met datum
         //We minus and add 15 minutes to give space to clean the tables (and to make sure that if the same time then the isbefore method still works)
         boolean TijdsuurLigtInTijdensvlak = (ingevoerdeTijd.isAfter(beginTijdTijdsvlak.minusMinutes(15))) && (ingevoerdeTijd.isBefore(eindTijdTijdsvlak.plusMinutes(15)));
         return TijdsuurLigtInTijdensvlak;
@@ -197,6 +204,11 @@ public class ReserveringenManager {
         LocalTime ingevoerdeBeginTijd = vraagOmInvoerBeginTijd(scanner);
 
         LocalTime ingevoerdeEindTijd = vraagOmInvoerEindTijd(scanner);
+
+
+        if(ingevoerdeBeginTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN) || ingevoerdeEindTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN)){
+            throw new SluitingstijdOnderCoronaException("De ingevoerde tijd gaat tegen de regels in. " + this.getClass().getName());
+        }
 
         String persoonReservering = vraagOmInvoerPersoon(scanner);
         Persoon reserverendePersoon;
@@ -252,7 +264,7 @@ public class ReserveringenManager {
             ingevoerdeBeginTijd = LocalTime.of(ingevoerdeBeginUur, ingevoerdeBeginMinuut);
         }
         else{
-            throw new VraagOmInvoerBeginTijdException("Er is geen geldige begintijd ingevoerd" + this.getClass().getName());
+            throw new VraagOmInvoerBeginTijdException("Er is geen geldige begintijd ingevoerd " + this.getClass().getName());
         }
 
         return ingevoerdeBeginTijd;
@@ -297,7 +309,7 @@ public class ReserveringenManager {
             return naamReservering;
         }
         else{
-            throw new VraagOmOpslaagGegevensException("Er is geen geldig antwoord gegeven over het opslaan van persoonsgegevens" + this.getClass().getName());
+            throw new VraagOmOpslaagGegevensException("Er is geen geldig antwoord gegeven over het opslaan van persoonsgegevens " + this.getClass().getName());
         }
     }
 

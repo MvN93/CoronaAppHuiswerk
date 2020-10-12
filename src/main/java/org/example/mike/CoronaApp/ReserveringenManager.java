@@ -44,8 +44,11 @@ public class ReserveringenManager {
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
                 //new variabele voor gevonden tafel
-                Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                lijstVanReserveringen.add(nieuweReservering);
+                if(!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)){
+                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+                    lijstVanReserveringen.add(nieuweReservering);
+                }
+                //nog toevoegen dat als eindttijd of 1 vd anderen null is we er een aanmaken gebruikmakend van de constructor zonder eidTijd en anderen
 
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
@@ -54,6 +57,11 @@ public class ReserveringenManager {
                 tafelnummer = tafelnummer +1;
             }
         }
+
+        if(vrijeTafelGevonden == false){
+            System.out.println("Helaas is deze optie al bezet.");
+        }
+
     }
 
     void neemReserveringAanAlleenNaamBekend(String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
@@ -88,6 +96,7 @@ public class ReserveringenManager {
         }
     }
 
+
     boolean gaNaOfTafelVrijIs(int tafelnummer, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering, boolean tafelIsVrij){
         for (Reservering reservering : lijstVanReserveringen) {
 
@@ -115,7 +124,6 @@ public class ReserveringenManager {
                 }
             }
         }
-
         return tafelIsVrij;
     }
 

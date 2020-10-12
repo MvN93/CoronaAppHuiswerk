@@ -19,6 +19,7 @@ public class Persoon {
     //getters and setters
     public void setNaam(String naam) {
         this.naam = naam;
+        //add throw
     }
     public String getNaam() {
         return naam;
@@ -26,6 +27,7 @@ public class Persoon {
 
     public void setTelefoonNummer(String telefoonNummer) {
         this.telefoonNummer = telefoonNummer;
+        //add throw
     }
     public String getTelefoonNummer() {
         return telefoonNummer;

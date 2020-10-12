@@ -10,6 +10,14 @@ import java.util.Scanner;
 public class HorecaCoronaTests {
 
     @Test
+    void maakEenReserveringViaConsole(){
+        ReserveringenManager reserveringenManager = geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen();
+        reserveringenManager.neemReserveringAanViaDeConsoleInvoer();
+
+        reserveringenManager.printLijstVanReserveringen();
+    }
+
+    @Test
     void aanmakenVanEenReserveringMetScannerInJuisteFormatEnPrintDezeNaarConsole(){
         HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
         ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
@@ -54,7 +62,7 @@ public class HorecaCoronaTests {
 
     @Test
     void probeerTeReserverenViaConsoleOpVolleSlotGeeftVolmeldingTerug(){
-        ReserveringenManager reserveringenManager =geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen();
+        ReserveringenManager reserveringenManager = geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please enter the date for which you would like to book in the following format: YYYY;MM;DD");

@@ -54,7 +54,6 @@ public class HorecaCoronaTests {
 
     @Test
     void probeerTeReserverenViaConsoleOpVolleSlotGeeftVolmeldingTerug(){
-        //WERKT NU NIET??? WHY, DE EERSTE FIJF LUKKEN WEL ... SOMEHOW WORDT DE DATUM ALS VERSCHILLEND GELEZEN
         ReserveringenManager reserveringenManager =geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen();
 
         Scanner scanner = new Scanner(System.in);

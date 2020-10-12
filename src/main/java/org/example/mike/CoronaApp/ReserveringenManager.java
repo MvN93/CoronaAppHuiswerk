@@ -94,6 +94,10 @@ public class ReserveringenManager {
                 tafelnummer = tafelnummer +1;
             }
         }
+
+        if(vrijeTafelGevonden == false){
+            System.out.println("Helaas is deze optie al bezet.");
+        }
     }
 
 
@@ -101,7 +105,7 @@ public class ReserveringenManager {
         for (Reservering reservering : lijstVanReserveringen) {
 
             boolean reserveringIsVanAnderTafelNummer = !(reservering.getTafel().getTafelNummer() == tafelnummer);
-            boolean reserveringIsVanAnderDatum = !(reservering.getDatum() == datumReservering);
+            boolean reserveringIsVanAnderDatum = !(reservering.getDatum().equals(datumReservering));
 
             if(reserveringIsVanAnderTafelNummer == true) {
                 //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant voor deze tafel want andere tafel

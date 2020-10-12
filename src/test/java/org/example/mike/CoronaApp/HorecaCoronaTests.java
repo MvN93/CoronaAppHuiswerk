@@ -17,91 +17,6 @@ public class HorecaCoronaTests {
         reserveringenManager.printLijstVanReserveringen();
     }
 
-    @Test
-    void aanmakenVanEenReserveringMetScannerInJuisteFormatEnPrintDezeNaarConsole(){
-        HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
-        ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter the date for which you would like to book in the following format: YYYY;MM;DD");
-
-        String ingevoerdeDatumAlsString = scanner.nextLine();
-        String[] ingevoerdeDatumAlsLosseStringsYearMonthDay = ingevoerdeDatumAlsString.split(";");
-        int ingevoerdeJaar = Integer.parseInt(ingevoerdeDatumAlsLosseStringsYearMonthDay[0]);
-        int ingevoerdeMaand = Integer.parseInt(ingevoerdeDatumAlsLosseStringsYearMonthDay[1]);
-        int ingevoerdeDag = Integer.parseInt(ingevoerdeDatumAlsLosseStringsYearMonthDay[2]);
-
-        LocalDate ingevoerdeDatum = LocalDate.of(ingevoerdeJaar, ingevoerdeMaand, ingevoerdeDag);
-
-        System.out.println("Please enter the starting time for which you would like to book in the following format: HH;MM");
-
-        String ingevoerdeBeginTijdAlsString = scanner.nextLine();
-        String[] ingevoerdeBeginTijdAlsLosseStrings = ingevoerdeBeginTijdAlsString.split(";");
-        int ingevoerdeBeginUur = Integer.parseInt(ingevoerdeBeginTijdAlsLosseStrings[0]);
-        int ingevoerdeBeginMinuut = Integer.parseInt(ingevoerdeBeginTijdAlsLosseStrings[1]);
-
-        LocalTime ingevoerdeBeginTijd = LocalTime.of(ingevoerdeBeginUur, ingevoerdeBeginMinuut);
-
-        System.out.println("Please enter the ending time for which you would like to book in the following format: HH;MM");
-
-        String ingevoerdeEindTijdAlsString = scanner.nextLine();
-        String[] ingevoerdeEindTijdAlsLosseStrings = ingevoerdeEindTijdAlsString.split(";");
-        int ingevoerdeEindUur = Integer.parseInt(ingevoerdeEindTijdAlsLosseStrings[0]);
-        int ingevoerdeEindMinuut = Integer.parseInt(ingevoerdeEindTijdAlsLosseStrings[1]);
-
-        LocalTime ingevoerdeEindTijd = LocalTime.of(ingevoerdeEindUur, ingevoerdeEindMinuut);
-
-        System.out.println("Wat is uw naam die ik mag noteren?");
-        String ingevoerdeNaam = scanner.nextLine();
-
-        System.out.println("Ik zal nu een reservering voor u maken");
-        reserveringenManager.neemReserveringAanAlleenNaamBekend(ingevoerdeNaam,ingevoerdeBeginTijd, ingevoerdeEindTijd, ingevoerdeDatum);
-
-        reserveringenManager.printLijstVanReserveringen();
-    }
-
-    @Test
-    void probeerTeReserverenViaConsoleOpVolleSlotGeeftVolmeldingTerug(){
-        ReserveringenManager reserveringenManager = geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please enter the date for which you would like to book in the following format: YYYY;MM;DD");
-
-        String ingevoerdeDatumAlsString = scanner.nextLine();
-        String[] ingevoerdeDatumAlsLosseStringsYearMonthDay = ingevoerdeDatumAlsString.split(";");
-        int ingevoerdeJaar = Integer.parseInt(ingevoerdeDatumAlsLosseStringsYearMonthDay[0]);
-        int ingevoerdeMaand = Integer.parseInt(ingevoerdeDatumAlsLosseStringsYearMonthDay[1]);
-        int ingevoerdeDag = Integer.parseInt(ingevoerdeDatumAlsLosseStringsYearMonthDay[2]);
-
-        LocalDate ingevoerdeDatum = LocalDate.of(ingevoerdeJaar, ingevoerdeMaand, ingevoerdeDag);
-
-        System.out.println("Please enter the starting time for which you would like to book in the following format: HH;MM");
-
-        String ingevoerdeBeginTijdAlsString = scanner.nextLine();
-        String[] ingevoerdeBeginTijdAlsLosseStrings = ingevoerdeBeginTijdAlsString.split(";");
-        int ingevoerdeBeginUur = Integer.parseInt(ingevoerdeBeginTijdAlsLosseStrings[0]);
-        int ingevoerdeBeginMinuut = Integer.parseInt(ingevoerdeBeginTijdAlsLosseStrings[1]);
-
-        LocalTime ingevoerdeBeginTijd = LocalTime.of(ingevoerdeBeginUur, ingevoerdeBeginMinuut);
-
-        System.out.println("Please enter the ending time for which you would like to book in the following format: HH;MM");
-
-        String ingevoerdeEindTijdAlsString = scanner.nextLine();
-        String[] ingevoerdeEindTijdAlsLosseStrings = ingevoerdeEindTijdAlsString.split(";");
-        int ingevoerdeEindUur = Integer.parseInt(ingevoerdeEindTijdAlsLosseStrings[0]);
-        int ingevoerdeEindMinuut = Integer.parseInt(ingevoerdeEindTijdAlsLosseStrings[1]);
-
-        LocalTime ingevoerdeEindTijd = LocalTime.of(ingevoerdeEindUur, ingevoerdeEindMinuut);
-
-        System.out.println("Wat is uw naam die ik mag noteren?");
-        String ingevoerdeNaam = scanner.nextLine();
-
-        System.out.println("Ik zal nu een reservering voor u maken");
-        reserveringenManager.neemReserveringAanAlleenNaamBekend(ingevoerdeNaam,ingevoerdeBeginTijd, ingevoerdeEindTijd, ingevoerdeDatum);
-
-        reserveringenManager.printLijstVanReserveringen();
-    }
-
     ReserveringenManager geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen(){
         HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
         ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
@@ -131,7 +46,7 @@ public class HorecaCoronaTests {
     }
 
     @Test
-    void aannemenVanReserveringenDoorDeManager(){
+    void aannemenVan4VanDe5ReserveringenDoorDeManagerEnPrintLijst(){
         HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
         ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
         Persoon testPersoon = new Persoon("Naam");

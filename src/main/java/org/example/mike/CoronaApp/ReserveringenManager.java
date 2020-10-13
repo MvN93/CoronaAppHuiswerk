@@ -1,5 +1,6 @@
 package org.example.mike.CoronaApp;
 
+import com.sun.xml.internal.bind.Locatable;
 import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
 
 import java.time.LocalDate;
@@ -49,24 +50,7 @@ public class ReserveringenManager {
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
                 //new variabele voor gevonden tafel
-                if(!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)){
-                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                else if(!(datumReservering == null) && !(beginTijdReservering == null)){
-                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                else if(!(beginTijdReservering == null) && !(eindTijdReservering == null)){
-                    Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                else if(!(beginTijdReservering == null)){
-                    Reservering nieuweReservering = new Reservering(beginTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                //nog toevoegen dat als eindttijd of 1 vd anderen null is we er een aanmaken gebruikmakend van de constructor zonder eidTijd en anderen
-                //begintijd kan eigenlijk niet null zijn vanwege eerdere exception dus kan eigenlijk weg hier?
+                maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
 
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
@@ -77,7 +61,49 @@ public class ReserveringenManager {
         }
 
         if(vrijeTafelGevonden == false){
+            Scanner scanner = new Scanner(System.in);
             System.out.println("Helaas is deze optie al bezet.");
+
+            LocalTime anderTijdsVoorstel = zoekAndereMogelijkheidOpZelfdeDatum(datumReservering);//, tijdsduurReservering);
+
+            if(anderTijdsVoorstel == null){
+                System.out.println("Helaas kunt u op deze dag niet reserveren, probeert u het graag nog eens op een andere dag.");
+            }
+            else{
+                System.out.println("Ik zie dat een ander moment, namelijk " + anderTijdsVoorstel.getHour() + ":" + anderTijdsVoorstel.getMinute() + " wel mogelijk is, zou u op deze tijd willen reserveren? Yes or No"); //kan dan nu nog niet uit meerdere opties kiezen, kunnen dit toevoegen door alle opties terug te geven.
+                String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
+                if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
+                    tafelnummer = 0;
+                    //het volgende blok kan dus in methode want herhaling
+                    //ga alle tafels langs tot plek gevonden is
+                    while((vrijeTafelGevonden == false) && tafelnummer < horecaGelegenheid.getAantalTafels()) {
+                        //begin met er van uit gaan dat de tafel vrij is, mocht dit niet het geval ijn wordt de boolean false, anders wordt gereserveerd.
+                        boolean tafelIsVrij = true;
+
+                        if(lijstVanReserveringen.size() > 0) {
+                            tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), datumReservering, tafelIsVrij);
+                        }
+                        //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
+
+                        //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
+                        if(tafelIsVrij == true) {
+                            maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), persoon, tafelnummer);
+
+                            //om de while loop te breken
+                            vrijeTafelGevonden = true;
+                        }
+                        else{
+                            tafelnummer = tafelnummer +1;
+                        }
+                    }
+                }
+                else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
+                    System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
+                }
+                else{
+                    throw new VraagOmBevestigingAnderMomentException("Er is niet geldig geantwoord op de vraag of een andere tijd in orde is " + this.getClass().getName());
+                }
+            }
         }
 
     }
@@ -102,22 +128,8 @@ public class ReserveringenManager {
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) {
-                if (!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)) {//&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
-                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                else if (!(datumReservering == null) && !(beginTijdReservering == null)) {
-                    Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                else if (!(beginTijdReservering == null) && !(eindTijdReservering == null)) {
-                    Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
-                else if (!(beginTijdReservering == null)) {
-                    Reservering nieuweReservering = new Reservering(beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
-                    lijstVanReserveringen.add(nieuweReservering);
-                }
+                maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
+
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
             }
@@ -127,8 +139,149 @@ public class ReserveringenManager {
         }
 
         if(vrijeTafelGevonden == false){
+            Scanner scanner = new Scanner(System.in);
             System.out.println("Helaas is deze optie al bezet.");
+
+            LocalTime anderTijdsVoorstel = zoekAndereMogelijkheidOpZelfdeDatum(datumReservering);//, tijdsduurReservering);
+
+            if(anderTijdsVoorstel == null){
+                System.out.println("Helaas kunt u op deze dag niet reserveren, probeert u het graag nog eens op een andere dag.");
+            }
+            else{
+                System.out.println("Ik zie dat een ander moment, namelijk " + anderTijdsVoorstel.getHour() + ":" + anderTijdsVoorstel.getMinute() + " wel mogelijk is, zou u op deze tijd willen reserveren? Yes or No"); //kan dan nu nog niet uit meerdere opties kiezen, kunnen dit toevoegen door alle opties terug te geven.
+                String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
+                if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
+                    tafelnummer = 0;
+                    //het volgende blok kan dus in methode want herhaling
+                    //ga alle tafels langs tot plek gevonden is
+                    while((vrijeTafelGevonden == false) && tafelnummer < horecaGelegenheid.getAantalTafels()) {
+                        //begin met er van uit gaan dat de tafel vrij is, mocht dit niet het geval ijn wordt de boolean false, anders wordt gereserveerd.
+                        boolean tafelIsVrij = true;
+
+                        if(lijstVanReserveringen.size() > 0) {
+                            tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), datumReservering, tafelIsVrij);
+                        }
+                        //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
+
+                        //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
+                        if(tafelIsVrij == true) {
+                            maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), reserveringOnderNaam, tafelnummer);
+
+                            //om de while loop te breken
+                            vrijeTafelGevonden = true;
+                        }
+                        else{
+                            tafelnummer = tafelnummer +1;
+                        }
+                    }
+                }
+                else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
+                    System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
+                }
+                else{
+                    throw new VraagOmBevestigingAnderMomentException("Er is niet geldig geantwoord op de vraag of een andere tijd in orde is " + this.getClass().getName());
+                }
+            }
+
         }
+    }
+
+    void maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(LocalDate datumReservering, LocalTime beginTijdReservering, LocalTime eindTijdReservering, Persoon persoon, int tafelnummer){
+        if(!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)){
+            Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+        else if(!(datumReservering == null) && !(beginTijdReservering == null)){
+            Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+        else if(!(beginTijdReservering == null) && !(eindTijdReservering == null)){
+            Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+        else if(!(beginTijdReservering == null)){
+            Reservering nieuweReservering = new Reservering(beginTijdReservering, persoon, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+    }
+
+    void maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(LocalDate datumReservering, LocalTime beginTijdReservering, LocalTime eindTijdReservering, String reserveringOnderNaam, int tafelnummer){
+        if (!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)) {//&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
+            Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+        else if (!(datumReservering == null) && !(beginTijdReservering == null)) {
+            Reservering nieuweReservering = new Reservering(datumReservering, beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+        else if (!(beginTijdReservering == null) && !(eindTijdReservering == null)) {
+            Reservering nieuweReservering = new Reservering(beginTijdReservering, eindTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+        else if (!(beginTijdReservering == null)) {
+            Reservering nieuweReservering = new Reservering(beginTijdReservering, reserveringOnderNaam, vindtTafelHorendeBijTafelnummer(tafelnummer, horecaGelegenheid));
+            lijstVanReserveringen.add(nieuweReservering);
+        }
+    }
+
+    LocalTime zoekAndereMogelijkheidOpZelfdeDatum(LocalDate datumReservering){//, int tijdsduurReservering){
+        if(datumReservering == null){
+            datumReservering = LocalDate.now();
+        }
+        //if(tijdsduurReservering == null){
+        int tijdsduurReservering = 2;
+        //}
+
+        ArrayList<LocalTime> mogelijkeAndereBeginTijden = new ArrayList<LocalTime>();
+        LocalTime mogelijkeBeginTijd;
+
+        for(Reservering reservering : lijstVanReserveringen){
+            boolean reserveringIsVanAnderDatum = !(reservering.getDatum().equals(datumReservering));
+
+            if(reserveringIsVanAnderDatum == true) {
+                //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant want andere datum
+            }
+            else{
+                LocalTime mogelijkeAndereTijd = reservering.getTijdTot().plusMinutes(15); //add 15 minutes for cleaning the table
+                mogelijkeAndereBeginTijden.add(mogelijkeAndereTijd);
+            }
+        }
+
+        if(mogelijkeAndereBeginTijden.isEmpty() == true){
+            mogelijkeBeginTijd = null;
+        }
+        else{
+            //ga na of misschien toch niet met andere reserveringen overlapt
+            for(LocalTime mogelijkeAndereBeginTijd : mogelijkeAndereBeginTijden){
+                boolean tochGeenMogelijkeTijd = false;
+
+                for(Reservering reservering : lijstVanReserveringen){
+                    tochGeenMogelijkeTijd = ingevoerdeTijdsuurLigtInVolTijdsvlak(mogelijkeAndereBeginTijd, reservering.getTijdVan(), reservering.getTijdTot());
+                }
+                for(Reservering reservering : lijstVanReserveringen){
+                    tochGeenMogelijkeTijd = ingevoerdeTijdsuurLigtInVolTijdsvlak(mogelijkeAndereBeginTijd.plusHours(tijdsduurReservering), reservering.getTijdVan(), reservering.getTijdTot());
+                }
+                for(Reservering reservering : lijstVanReserveringen){
+                    if (mogelijkeAndereBeginTijd.isBefore(reservering.getTijdVan()) && mogelijkeAndereBeginTijd.isAfter(reservering.getTijdTot())) {
+                        tochGeenMogelijkeTijd = true;
+                    }
+                }
+
+                if(tochGeenMogelijkeTijd == true){
+                    mogelijkeAndereBeginTijden.remove(mogelijkeAndereBeginTijd);
+                }
+            }
+
+            if(mogelijkeAndereBeginTijden.isEmpty() == true){
+                mogelijkeBeginTijd = null;
+            }
+            else {
+                //now we choose just the first option from the ones that are; should become all of them and let them choose
+                mogelijkeBeginTijd = mogelijkeAndereBeginTijden.get(0);
+            }
+        }
+
+        return mogelijkeBeginTijd;
     }
 
 

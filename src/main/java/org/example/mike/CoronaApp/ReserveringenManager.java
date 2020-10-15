@@ -36,6 +36,8 @@ public class ReserveringenManager {
                 System.out.println("Ik zie dat een ander moment, namelijk " + anderTijdsVoorstel.getHour() + ":" + anderTijdsVoorstel.getMinute() + " wel mogelijk is, zou u op deze tijd willen reserveren? Yes or No"); //kan dan nu nog niet uit meerdere opties kiezen, kunnen dit toevoegen door alle opties terug te geven.
                 String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
                 if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
+                    vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), datumReservering);
+                    /*
                     int tafelnummer = 0;
                     //het volgende blok kan dus in methode want herhaling
                     //ga alle tafels langs tot plek gevonden is
@@ -63,6 +65,8 @@ public class ReserveringenManager {
                             tafelnummer = tafelnummer +1;
                         }
                     }
+
+                     */
                 }
                 else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
                     System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
@@ -90,6 +94,13 @@ public class ReserveringenManager {
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
+                if(!(persoon == null)){
+                    maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
+                }
+                else{
+                    maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
+                }
+
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
             }

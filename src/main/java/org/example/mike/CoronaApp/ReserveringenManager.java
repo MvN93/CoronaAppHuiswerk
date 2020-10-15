@@ -1,8 +1,5 @@
 package org.example.mike.CoronaApp;
 
-import com.sun.xml.internal.bind.Locatable;
-import com.sun.xml.internal.bind.v2.runtime.output.SAXOutput;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -24,7 +21,7 @@ public class ReserveringenManager {
 
         boolean vrijeTafelGevonden = false;
 
-        vrijeTafelGevonden = zoekEenVrijeTafelVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
+        vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
 
         if(vrijeTafelGevonden == false){
             Scanner scanner = new Scanner(System.in);
@@ -77,7 +74,7 @@ public class ReserveringenManager {
         }
     }
 
-    boolean zoekEenVrijeTafelVoorMeegegevenTijdEnDatum(boolean vrijeTafelGevonden, Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering){
+    boolean zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(boolean vrijeTafelGevonden, Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering){
         //tafelnummer als index gebruikt
         int tafelnummer = 0;
 
@@ -93,14 +90,6 @@ public class ReserveringenManager {
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
-                //new variabele voor gevonden tafel
-                if(!(persoon == null)){
-                    maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
-                }
-                else{
-                    maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
-                }
-
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
             }

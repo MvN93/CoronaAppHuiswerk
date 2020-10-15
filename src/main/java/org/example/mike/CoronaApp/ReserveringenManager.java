@@ -19,54 +19,12 @@ public class ReserveringenManager {
         lijstVanReserveringen = new ArrayList<Reservering>();
     }
 
-    /*
-    //checked de datum nog niet
-    void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering){
-        if(!(persoon == null)){
-            neemReserveringAanPersoonsObjectBekend(persoon, beginTijdReservering, eindTijdReservering, datumReservering);
-        }
-        else{
-            neemReserveringAanAlleenNaamBekend(reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
-        }
-    }
-    */
-
-
     void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
         //!!Note: dit houdt nu nog geen rekening met of voldoende plek aan tafel
 
         boolean vrijeTafelGevonden = false;
 
-        //tafelnummer als index gebruikt
-        int tafelnummer = 0;
-
-        //ga alle tafels langs tot plek gevonden is
-        while((vrijeTafelGevonden == false) && tafelnummer < horecaGelegenheid.getAantalTafels()) {
-            //begin met er van uit gaan dat de tafel vrij is, mocht dit niet het geval ijn wordt de boolean false, anders wordt gereserveerd.
-            boolean tafelIsVrij = true;
-
-            if(lijstVanReserveringen.size() > 0) {
-                tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, beginTijdReservering, eindTijdReservering, datumReservering, tafelIsVrij);
-            }
-            //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
-
-            //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
-            if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
-                //new variabele voor gevonden tafel
-                if(!(persoon == null)){
-                    maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
-                }
-                else{
-                    maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
-                }
-
-                //om de while loop te breken
-                vrijeTafelGevonden = true;
-            }
-            else{
-                tafelnummer = tafelnummer +1;
-            }
-        }
+        vrijeTafelGevonden = zoekEenVrijeTafelVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
 
         if(vrijeTafelGevonden == false){
             Scanner scanner = new Scanner(System.in);
@@ -81,7 +39,7 @@ public class ReserveringenManager {
                 System.out.println("Ik zie dat een ander moment, namelijk " + anderTijdsVoorstel.getHour() + ":" + anderTijdsVoorstel.getMinute() + " wel mogelijk is, zou u op deze tijd willen reserveren? Yes or No"); //kan dan nu nog niet uit meerdere opties kiezen, kunnen dit toevoegen door alle opties terug te geven.
                 String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
                 if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
-                    tafelnummer = 0;
+                    int tafelnummer = 0;
                     //het volgende blok kan dus in methode want herhaling
                     //ga alle tafels langs tot plek gevonden is
                     while((vrijeTafelGevonden == false) && tafelnummer < horecaGelegenheid.getAantalTafels()) {
@@ -117,15 +75,9 @@ public class ReserveringenManager {
                 }
             }
         }
-
     }
 
-    /*
-    void neemReserveringAanAlleenNaamBekend(String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
-        //!!Note: dit houdt nu nog geen rekening met of voldoende plek aan tafel
-
-        boolean vrijeTafelGevonden = false;
-
+    boolean zoekEenVrijeTafelVoorMeegegevenTijdEnDatum(boolean vrijeTafelGevonden, Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering){
         //tafelnummer als index gebruikt
         int tafelnummer = 0;
 
@@ -140,8 +92,14 @@ public class ReserveringenManager {
             //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
 
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
-            if(tafelIsVrij == true) {
-                maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
+            if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
+                //new variabele voor gevonden tafel
+                if(!(persoon == null)){
+                    maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
+                }
+                else{
+                    maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
+                }
 
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
@@ -150,56 +108,8 @@ public class ReserveringenManager {
                 tafelnummer = tafelnummer +1;
             }
         }
-
-        if(vrijeTafelGevonden == false){
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Helaas is deze optie al bezet.");
-
-            LocalTime anderTijdsVoorstel = zoekAndereMogelijkheidOpZelfdeDatum(datumReservering);//, tijdsduurReservering);
-
-            if(anderTijdsVoorstel == null){
-                System.out.println("Helaas kunt u op deze dag niet reserveren, probeert u het graag nog eens op een andere dag.");
-            }
-            else{
-                System.out.println("Ik zie dat een ander moment, namelijk " + anderTijdsVoorstel.getHour() + ":" + anderTijdsVoorstel.getMinute() + " wel mogelijk is, zou u op deze tijd willen reserveren? Yes or No"); //kan dan nu nog niet uit meerdere opties kiezen, kunnen dit toevoegen door alle opties terug te geven.
-                String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
-                if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
-                    tafelnummer = 0;
-                    //het volgende blok kan dus in methode want herhaling
-                    //ga alle tafels langs tot plek gevonden is
-                    while((vrijeTafelGevonden == false) && tafelnummer < horecaGelegenheid.getAantalTafels()) {
-                        //begin met er van uit gaan dat de tafel vrij is, mocht dit niet het geval ijn wordt de boolean false, anders wordt gereserveerd.
-                        boolean tafelIsVrij = true;
-
-                        if(lijstVanReserveringen.size() > 0) {
-                            tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), datumReservering, tafelIsVrij);
-                        }
-                        //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
-
-                        //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
-                        if(tafelIsVrij == true) {
-                            maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), reserveringOnderNaam, tafelnummer);
-
-                            //om de while loop te breken
-                            vrijeTafelGevonden = true;
-                        }
-                        else{
-                            tafelnummer = tafelnummer +1;
-                        }
-                    }
-                }
-                else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
-                    System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
-                }
-                else{
-                    throw new VraagOmBevestigingAnderMomentException("Er is niet geldig geantwoord op de vraag of een andere tijd in orde is " + this.getClass().getName());
-                }
-            }
-
-        }
+        return vrijeTafelGevonden;
     }
-
-     */
 
     void maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(LocalDate datumReservering, LocalTime beginTijdReservering, LocalTime eindTijdReservering, Persoon persoon, int tafelnummer){
         if(!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)){
@@ -373,8 +283,13 @@ public class ReserveringenManager {
 
         LocalTime ingevoerdeEindTijd = vraagOmInvoerEindTijd(scanner);
 
+        LocalTime ingevoerdeEindTijdCoronamaatregel = ingevoerdeEindTijd;
 
-        if(ingevoerdeBeginTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN) || ingevoerdeEindTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN)){
+        if(ingevoerdeEindTijd == null){
+            ingevoerdeEindTijdCoronamaatregel = ingevoerdeBeginTijd.plusHours(2);
+        }
+
+        if(ingevoerdeBeginTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN) || ingevoerdeEindTijdCoronamaatregel.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN)){
             throw new SluitingstijdOnderCoronaException("De ingevoerde tijd gaat tegen de regels in. " + this.getClass().getName());
         }
 

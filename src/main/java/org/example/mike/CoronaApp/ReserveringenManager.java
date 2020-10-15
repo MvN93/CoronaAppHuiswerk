@@ -19,6 +19,7 @@ public class ReserveringenManager {
         lijstVanReserveringen = new ArrayList<Reservering>();
     }
 
+    /*
     //checked de datum nog niet
     void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering){
         if(!(persoon == null)){
@@ -28,8 +29,10 @@ public class ReserveringenManager {
             neemReserveringAanAlleenNaamBekend(reserveringOnderNaam, beginTijdReservering, eindTijdReservering, datumReservering);
         }
     }
+    */
 
-    void neemReserveringAanPersoonsObjectBekend(Persoon persoon, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
+
+    void neemReserveringAan(Persoon persoon, String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
         //!!Note: dit houdt nu nog geen rekening met of voldoende plek aan tafel
 
         boolean vrijeTafelGevonden = false;
@@ -50,7 +53,12 @@ public class ReserveringenManager {
             //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
             if(tafelIsVrij == true) { //&& als genoeg plek aan tafel (dit moet nog toegevoegd worden)
                 //new variabele voor gevonden tafel
-                maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
+                if(!(persoon == null)){
+                    maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, beginTijdReservering, eindTijdReservering, persoon, tafelnummer);
+                }
+                else{
+                    maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, beginTijdReservering, eindTijdReservering, reserveringOnderNaam, tafelnummer);
+                }
 
                 //om de while loop te breken
                 vrijeTafelGevonden = true;
@@ -87,8 +95,12 @@ public class ReserveringenManager {
 
                         //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
                         if(tafelIsVrij == true) {
-                            maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), persoon, tafelnummer);
-
+                            if(!(persoon == null)) {
+                                maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), persoon, tafelnummer);
+                            }
+                            else{
+                                maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), reserveringOnderNaam, tafelnummer);
+                            }
                             //om de while loop te breken
                             vrijeTafelGevonden = true;
                         }
@@ -108,6 +120,7 @@ public class ReserveringenManager {
 
     }
 
+    /*
     void neemReserveringAanAlleenNaamBekend(String reserveringOnderNaam, LocalTime beginTijdReservering, LocalTime eindTijdReservering, LocalDate datumReservering) {
         //!!Note: dit houdt nu nog geen rekening met of voldoende plek aan tafel
 
@@ -185,6 +198,8 @@ public class ReserveringenManager {
 
         }
     }
+
+     */
 
     void maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(LocalDate datumReservering, LocalTime beginTijdReservering, LocalTime eindTijdReservering, Persoon persoon, int tafelnummer){
         if(!(datumReservering == null) && !(beginTijdReservering == null) && !(eindTijdReservering == null)){

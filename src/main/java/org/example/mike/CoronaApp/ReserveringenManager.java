@@ -50,7 +50,7 @@ public class ReserveringenManager {
                     String ingevoerdeKeuzeAlternatieveTijd = scanner.nextLine();
 
                     int indexGekozenAlternatieveTijd = Integer.parseInt(ingevoerdeKeuzeAlternatieveTijd) - 1; //moeten nu nog een exception throwen als geen int en voor als out of bounds
-                    vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, mogelijkeAndereBeginTijden.get(indexGekozenAlternatieveTijd), mogelijkeAndereBeginTijden.get(indexGekozenAlternatieveTijd).plusHours(2), datumReservering);
+                    vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, mogelijkeAndereBeginTijden.get(indexGekozenAlternatieveTijd), mogelijkeAndereBeginTijden.get(indexGekozenAlternatieveTijd).plusHours(Reservering.getDefaultTijdsduurReservering()), datumReservering);
                 }
                 else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
                     System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
@@ -188,7 +188,7 @@ public class ReserveringenManager {
             datumReservering = LocalDate.now();
         }
         if(eindTijdReservering == null){
-            eindTijdReservering = beginTijdReservering.plusHours(2);
+            eindTijdReservering = beginTijdReservering.plusHours(Reservering.getDefaultTijdsduurReservering());
         }
 
         for (Reservering reservering : lijstVanReserveringen) {
@@ -252,20 +252,6 @@ public class ReserveringenManager {
 
         LocalDate ingevoerdeDatum = vraagOmInvoerDatum(scanner);
 
-        LocalTime ingevoerdeBeginTijd = vraagOmInvoerBeginTijd(scanner);
-
-        LocalTime ingevoerdeEindTijd = vraagOmInvoerEindTijd(scanner);
-
-        LocalTime ingevoerdeEindTijdCoronamaatregel = ingevoerdeEindTijd;
-
-        if(ingevoerdeEindTijd == null){
-            ingevoerdeEindTijdCoronamaatregel = ingevoerdeBeginTijd.plusHours(2);
-        }
-
-        if(ingevoerdeBeginTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN) || ingevoerdeEindTijdCoronamaatregel.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN)){
-            throw new SluitingstijdOnderCoronaException("De ingevoerde tijd gaat tegen de regels in. " + this.getClass().getName());
-        }
-
         String persoonReservering = vraagOmInvoerPersoon(scanner);
         Persoon reserverendePersoon;
         String naamPersoon;
@@ -281,10 +267,56 @@ public class ReserveringenManager {
             naamPersoon = persoonReservering;
         }
 
-        System.out.println("Bedankt voor het doorgeven van uw gegevens.");
-        System.out.println("Ik zal nu voor u kijken of er een tafel beschikbaar is op de aangevraagde tijd.");
+        LocalTime ingevoerdeBeginTijd = vraagOmInvoerBeginTijd(scanner);
 
-        neemReserveringAan(reserverendePersoon, naamPersoon, ingevoerdeBeginTijd, ingevoerdeEindTijd, ingevoerdeDatum);
+        System.out.println("Bedankt voor het doorgeven van uw gegevens.");
+        if(ingevoerdeBeginTijd == null){
+
+            ArrayList<LocalTime> mogelijkeBeginTijden = zoekAndereMogelijkheidOpZelfdeDatum(ingevoerdeDatum);
+
+            System.out.println("Ik heb voor deze dag een aantal opties voor u, namelijk:");
+            for(LocalTime mogelijkeBeginTijd : mogelijkeBeginTijden){
+                System.out.print(mogelijkeBeginTijd.getHour() + ":" + mogelijkeBeginTijd.getMinute() + " | ");
+            }
+            System.out.println(" ");
+
+            System.out.println("Zou u op een van deze tijden willen reserveren? Yes or No");
+
+            String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
+
+            if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
+                System.out.println("Welke van deze zou u willen kiezen? U kunt uw keuze maken met een getal, bijvoorbeeld typt u 2 als u gebruik wilt maken van de 2e mogelijkheid in de lijst.");
+                String ingevoerdeKeuzeAlternatieveTijd = scanner.nextLine();
+
+                boolean vrijeTafelGevonden = false;
+                int indexGekozenAlternatieveTijd = Integer.parseInt(ingevoerdeKeuzeAlternatieveTijd) - 1; //moeten nu nog een exception throwen als geen int en voor als out of bounds
+                vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, reserverendePersoon, naamPersoon, mogelijkeBeginTijden.get(indexGekozenAlternatieveTijd), mogelijkeBeginTijden.get(indexGekozenAlternatieveTijd).plusHours(Reservering.getDefaultTijdsduurReservering()), ingevoerdeDatum);
+            }
+            else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
+                System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
+            }
+            else{
+                throw new VraagOmBevestigingAnderMomentException("Er is niet geldig geantwoord op de vraag of een andere tijd in orde is " + this.getClass().getName());
+            }
+
+        }
+        else {
+            LocalTime ingevoerdeEindTijd = vraagOmInvoerEindTijd(scanner);
+
+            LocalTime ingevoerdeEindTijdCoronamaatregel = ingevoerdeEindTijd;
+
+            if(ingevoerdeEindTijd == null){
+                ingevoerdeEindTijdCoronamaatregel = ingevoerdeBeginTijd.plusHours(Reservering.getDefaultTijdsduurReservering());
+            }
+
+            if(ingevoerdeBeginTijd.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN) || ingevoerdeEindTijdCoronamaatregel.isAfter(SLUITINGSTIJD_ONDER_CORONAMAATREGELEN)){
+                throw new SluitingstijdOnderCoronaException("De ingevoerde tijd gaat tegen de regels in. " + this.getClass().getName());
+            }
+
+            System.out.println("Ik zal nu voor u kijken of er een tafel beschikbaar is op de aangevraagde tijd.");
+
+            neemReserveringAan(reserverendePersoon, naamPersoon, ingevoerdeBeginTijd, ingevoerdeEindTijd, ingevoerdeDatum);
+        }
     }
 
     public LocalDate vraagOmInvoerDatum(Scanner scanner){
@@ -318,6 +350,9 @@ public class ReserveringenManager {
             int ingevoerdeBeginMinuut = Integer.parseInt(ingevoerdeBeginTijdAlsLosseStrings[1]);
 
             ingevoerdeBeginTijd = LocalTime.of(ingevoerdeBeginUur, ingevoerdeBeginMinuut);
+        }
+        else if(ingevoerdeBeginTijdAlsString.isEmpty() == true){
+            ingevoerdeBeginTijd = null;
         }
         else{
             throw new VraagOmInvoerBeginTijdException("Er is geen geldige begintijd ingevoerd " + this.getClass().getName());

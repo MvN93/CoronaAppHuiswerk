@@ -341,7 +341,7 @@ public class ReserveringenManager {
 
     public LocalTime vraagOmInvoerBeginTijd(Scanner scanner){
         LocalTime ingevoerdeBeginTijd;
-        System.out.println("Please enter the starting time for which you would like to book in the following format: HH;MM");
+        System.out.println("Please enter the starting time for which you would like to book in the following format: HH;MM  Of laat het leeg om de mogelijkheden voor vandaag te horen." );
 
         String ingevoerdeBeginTijdAlsString = scanner.nextLine();
         if(ingevoerdeBeginTijdAlsString.contains(";")) {

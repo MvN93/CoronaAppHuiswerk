@@ -34,6 +34,7 @@ public class HorecaGelegenheid {
     }
 
     public void setAantalTafels(int aantalTafels) {
+        //add safety check??
         this.aantalTafels = aantalTafels;
     }
     public int getAantalTafels() {
@@ -44,6 +45,7 @@ public class HorecaGelegenheid {
         return maximaleCapaciteitHorecaGelegenheid;
     }
     void setMaximaleCapaciteitHorecaGelegenheid(int maximaleCapaciteitHorecaGelegenheid) {
+        //add safety check??
         this.maximaleCapaciteitHorecaGelegenheid = maximaleCapaciteitHorecaGelegenheid;
     }
 

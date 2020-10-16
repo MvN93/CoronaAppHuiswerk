@@ -31,6 +31,7 @@ public class ReserveringenManager {
             System.out.println("Helaas is deze optie al bezet.");
 
             ArrayList<LocalTime> mogelijkeAndereBeginTijden = zoekAndereMogelijkheidOpZelfdeDatum(datumReservering);//, tijdsduurReservering);
+
             if(mogelijkeAndereBeginTijden.isEmpty() == true){
                 System.out.println("Helaas kunt u op deze dag niet reserveren, probeert u het graag nog eens op een andere dag.");
             }
@@ -137,7 +138,7 @@ public class ReserveringenManager {
             datumReservering = LocalDate.now();
         }
         //if(tijdsduurReservering == null){
-        int tijdsduurReservering = 2;
+        int tijdsduurReservering = Reservering.getDefaultTijdsduurReservering();
         //}
 
         ArrayList<LocalTime> mogelijkeAndereBeginTijden = new ArrayList<LocalTime>();
@@ -150,7 +151,7 @@ public class ReserveringenManager {
                 //beeindig voor deze reserveringdoorloping de forloop want reservering niet relevant want andere datum
             }
             else{
-                LocalTime mogelijkeAndereTijd = reservering.getTijdTot().plusMinutes(15); //add 15 minutes for cleaning the table
+                LocalTime mogelijkeAndereTijd = reservering.getTijdTot().plusMinutes(Reservering.getDefaultTijdsduurTussenReserveringen()); //add default minutes for cleaning the table
                 mogelijkeAndereBeginTijden.add(mogelijkeAndereTijd);
             }
         }
@@ -224,8 +225,8 @@ public class ReserveringenManager {
     }
 
     boolean ingevoerdeTijdsuurLigtInVolTijdsvlak(LocalTime ingevoerdeTijd, LocalTime beginTijdTijdsvlak, LocalTime eindTijdTijdsvlak){
-        //We minus and add 15 minutes to give space to clean the tables (and to make sure that if the same time then the isbefore method still works)
-        boolean TijdsuurLigtInTijdensvlak = (ingevoerdeTijd.isAfter(beginTijdTijdsvlak.minusMinutes(15))) && (ingevoerdeTijd.isBefore(eindTijdTijdsvlak.plusMinutes(15)));
+        //We minus and add default minutes to give space to clean the tables (and to make sure that if the same time then the isbefore method still works)
+        boolean TijdsuurLigtInTijdensvlak = (ingevoerdeTijd.isAfter(beginTijdTijdsvlak.minusMinutes(Reservering.getDefaultTijdsduurTussenReserveringen()))) && (ingevoerdeTijd.isBefore(eindTijdTijdsvlak.plusMinutes(Reservering.getDefaultTijdsduurTussenReserveringen())));
         return TijdsuurLigtInTijdensvlak;
     }
 

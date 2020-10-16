@@ -14,6 +14,9 @@ public class Reservering {
     private Tafel tafel;
     private Persoon persoonReservering;
 
+    private final static int DEFAULT_TIJDSDUUR_RESERVERING = 2;
+    private final static int DEFAULT_TIJDSDUUR_TUSSEN_RESERVERINGEN = 15;
+
     //Volgende Constructoren worden gebruikt wanneer het Persoonsobject niet bekend is (bijvoorbeeld bij kort van te voren reserveren)
     //wanneer geen datum en eindtijd aangegeven ga uit van vandaag en van max 2 uur
     Reservering(LocalTime tijdVan, String naamReservering, Tafel tafel){
@@ -78,6 +81,7 @@ public class Reservering {
 
     //getters and setters
     public void setDatum(LocalDate datum) {
+        //add safety check??
         this.datum = datum;
     }
     public LocalDate getDatum() {
@@ -85,6 +89,7 @@ public class Reservering {
     }
 
     public void setTijdVan(LocalTime tijdVan) {
+        //add safety check??
         this.tijdVan = tijdVan;
     }
     //throw runtime exception if >= constante 23 (corona maatregel)
@@ -93,6 +98,7 @@ public class Reservering {
     }
 
     public void setTijdTot(LocalTime tijdTot) {
+        //add safety check??
         this.tijdTot = tijdTot;
     }
     //throw runtime exception if >= constante 23 (corona maatregel)
@@ -108,6 +114,7 @@ public class Reservering {
     }
 
     public void setTafel(Tafel tafel) {
+        //add safety check??
         this.tafel = tafel;
     }
     public Tafel getTafel() {
@@ -115,9 +122,18 @@ public class Reservering {
     }
 
     public void setPersoonReservering(Persoon persoonReservering) {
+        //add safety check??
         this.persoonReservering = persoonReservering;
     }
     public Persoon getPersoonReservering() {
         return persoonReservering;
+    }
+
+    public static int getDefaultTijdsduurReservering() {
+        return DEFAULT_TIJDSDUUR_RESERVERING;
+    }
+
+    public static int getDefaultTijdsduurTussenReserveringen() {
+        return DEFAULT_TIJDSDUUR_TUSSEN_RESERVERINGEN;
     }
 }

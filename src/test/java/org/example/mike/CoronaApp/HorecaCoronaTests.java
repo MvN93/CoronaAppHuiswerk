@@ -11,13 +11,13 @@ public class HorecaCoronaTests {
 
     @Test
     void maakEenReserveringViaConsole(){
-        ReserveringenManager reserveringenManager = geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen();
+        ReserveringenManager reserveringenManager = geefReserveringenManagerTerugWaarbij4TestreserveringenZijnOpgenomen();
         reserveringenManager.neemReserveringAanViaDeConsoleInvoer();
 
         reserveringenManager.printLijstVanReserveringen();
     }
 
-    ReserveringenManager geefReserveringenManagerTerugWaarbij5TestreserveringenZijnOpgenomen(){
+    ReserveringenManager geefReserveringenManagerTerugWaarbij4TestreserveringenZijnOpgenomen(){
         HorecaGelegenheid horecaGelegenheid = maakEenHorecaGelegenheidAan();
         ReserveringenManager reserveringenManager = new ReserveringenManager(horecaGelegenheid);
         Persoon testPersoon = new Persoon("Naam");
@@ -40,7 +40,6 @@ public class HorecaCoronaTests {
         reserveringenManager.neemReserveringAan(testPersoon2, testPersoon2.getNaam(),tijd3, tijd4, testDatum);
         reserveringenManager.neemReserveringAan(null, testPersoon3,tijd5, tijd6, testDatum);
         reserveringenManager.neemReserveringAan(testPersoon4, testPersoon4.getNaam(),tijd1, tijd2, testDatum2);
-        reserveringenManager.neemReserveringAan(testPersoon4, testPersoon5.getNaam(),tijd3, tijd4, testDatum2);
 
         return reserveringenManager;
     }

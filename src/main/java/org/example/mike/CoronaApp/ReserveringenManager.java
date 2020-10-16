@@ -1,5 +1,8 @@
 package org.example.mike.CoronaApp;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
+
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -27,46 +30,26 @@ public class ReserveringenManager {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Helaas is deze optie al bezet.");
 
-            LocalTime anderTijdsVoorstel = zoekAndereMogelijkheidOpZelfdeDatum(datumReservering);//, tijdsduurReservering);
-
-            if(anderTijdsVoorstel == null){
+            ArrayList<LocalTime> mogelijkeAndereBeginTijden = zoekAndereMogelijkheidOpZelfdeDatum(datumReservering);//, tijdsduurReservering);
+            if(mogelijkeAndereBeginTijden.isEmpty() == true){
                 System.out.println("Helaas kunt u op deze dag niet reserveren, probeert u het graag nog eens op een andere dag.");
             }
             else{
-                System.out.println("Ik zie dat een ander moment, namelijk " + anderTijdsVoorstel.getHour() + ":" + anderTijdsVoorstel.getMinute() + " wel mogelijk is, zou u op deze tijd willen reserveren? Yes or No"); //kan dan nu nog niet uit meerdere opties kiezen, kunnen dit toevoegen door alle opties terug te geven.
+                System.out.println("Ik zie dat er op deze datum wel andere reserveringsmogelijkheden zijn, namelijk:");
+                for(LocalTime mogelijkeAndereBeginTijd : mogelijkeAndereBeginTijden){
+                    System.out.print(mogelijkeAndereBeginTijd.getHour() + ":" + mogelijkeAndereBeginTijd.getMinute() + " | ");
+                }
+                System.out.println(" ");
+                System.out.println("Zou u op een van deze tijden willen reserveren? Yes or No");
+
                 String ingevoerdeAntwoordOfAndereTijdInOrdeIs = scanner.nextLine();
+                
                 if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("yes")){
-                    vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), datumReservering);
-                    /*
-                    int tafelnummer = 0;
-                    //het volgende blok kan dus in methode want herhaling
-                    //ga alle tafels langs tot plek gevonden is
-                    while((vrijeTafelGevonden == false) && tafelnummer < horecaGelegenheid.getAantalTafels()) {
-                        //begin met er van uit gaan dat de tafel vrij is, mocht dit niet het geval ijn wordt de boolean false, anders wordt gereserveerd.
-                        boolean tafelIsVrij = true;
+                    System.out.println("Bedankt! Welke van de opties zou u willen kiezen? U kunt uw keuze maken met een getal, bijvoorbeeld typt u 2 als u gebruik wilt maken van de 2e mogelijkheid in de lijst.");
+                    String ingevoerdeKeuzeAlternatieveTijd = scanner.nextLine();
 
-                        if(lijstVanReserveringen.size() > 0) {
-                            tafelIsVrij = gaNaOfTafelVrijIs(tafelnummer, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), datumReservering, tafelIsVrij);
-                        }
-                        //else tafel is vrij, want er zijn geen reserveringen dus hoeven niks te doen
-
-                        //maak reservering als vrij, anders verhoog de tafelindex en controlleer de andere tafel
-                        if(tafelIsVrij == true) {
-                            if(!(persoon == null)) {
-                                maakReserveringAanEnVoegToeAanLijstPersoonsObjectBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), persoon, tafelnummer);
-                            }
-                            else{
-                                maakReserveringAanEnVoegToeAanLijstAlleenNaamBekend(datumReservering, anderTijdsVoorstel, anderTijdsVoorstel.plusHours(2), reserveringOnderNaam, tafelnummer);
-                            }
-                            //om de while loop te breken
-                            vrijeTafelGevonden = true;
-                        }
-                        else{
-                            tafelnummer = tafelnummer +1;
-                        }
-                    }
-
-                     */
+                    int indexGekozenAlternatieveTijd = Integer.parseInt(ingevoerdeKeuzeAlternatieveTijd) - 1; //moeten nu nog een exception throwen als geen int en voor als out of bounds
+                    vrijeTafelGevonden = zoekEenVrijeTafelEnMaakReserveringAlsGevondenVoorMeegegevenTijdEnDatum(vrijeTafelGevonden, persoon, reserveringOnderNaam, mogelijkeAndereBeginTijden.get(indexGekozenAlternatieveTijd), mogelijkeAndereBeginTijden.get(indexGekozenAlternatieveTijd).plusHours(2), datumReservering);
                 }
                 else if(ingevoerdeAntwoordOfAndereTijdInOrdeIs.equalsIgnoreCase("no")){
                     System.out.println("Helaas, hopelijk komt u binnenkort weer langs.");
@@ -149,7 +132,7 @@ public class ReserveringenManager {
         }
     }
 
-    LocalTime zoekAndereMogelijkheidOpZelfdeDatum(LocalDate datumReservering){//, int tijdsduurReservering){
+    ArrayList<LocalTime> zoekAndereMogelijkheidOpZelfdeDatum(LocalDate datumReservering){//, int tijdsduurReservering){
         if(datumReservering == null){
             datumReservering = LocalDate.now();
         }
@@ -172,41 +155,30 @@ public class ReserveringenManager {
             }
         }
 
-        if(mogelijkeAndereBeginTijden.isEmpty() == true){
-            mogelijkeBeginTijd = null;
-        }
-        else{
+        if(mogelijkeAndereBeginTijden.isEmpty() == false) {
             //ga na of misschien toch niet met andere reserveringen overlapt
-            for(LocalTime mogelijkeAndereBeginTijd : mogelijkeAndereBeginTijden){
+            for (LocalTime mogelijkeAndereBeginTijd : mogelijkeAndereBeginTijden) {
                 boolean tochGeenMogelijkeTijd = false;
 
-                for(Reservering reservering : lijstVanReserveringen){
+                for (Reservering reservering : lijstVanReserveringen) {
                     tochGeenMogelijkeTijd = ingevoerdeTijdsuurLigtInVolTijdsvlak(mogelijkeAndereBeginTijd, reservering.getTijdVan(), reservering.getTijdTot());
                 }
-                for(Reservering reservering : lijstVanReserveringen){
+                for (Reservering reservering : lijstVanReserveringen) {
                     tochGeenMogelijkeTijd = ingevoerdeTijdsuurLigtInVolTijdsvlak(mogelijkeAndereBeginTijd.plusHours(tijdsduurReservering), reservering.getTijdVan(), reservering.getTijdTot());
                 }
-                for(Reservering reservering : lijstVanReserveringen){
+                for (Reservering reservering : lijstVanReserveringen) {
                     if (mogelijkeAndereBeginTijd.isBefore(reservering.getTijdVan()) && mogelijkeAndereBeginTijd.isAfter(reservering.getTijdTot())) {
                         tochGeenMogelijkeTijd = true;
                     }
                 }
 
-                if(tochGeenMogelijkeTijd == true){
+                if (tochGeenMogelijkeTijd == true) {
                     mogelijkeAndereBeginTijden.remove(mogelijkeAndereBeginTijd);
                 }
             }
-
-            if(mogelijkeAndereBeginTijden.isEmpty() == true){
-                mogelijkeBeginTijd = null;
-            }
-            else {
-                //now we choose just the first option from the ones that are; should become all of them and let them choose
-                mogelijkeBeginTijd = mogelijkeAndereBeginTijden.get(0);
-            }
         }
 
-        return mogelijkeBeginTijd;
+        return mogelijkeAndereBeginTijden;
     }
 
 
